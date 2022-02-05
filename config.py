@@ -1,6 +1,6 @@
 from os import environ, getcwd, path
 
-port = 5000
+port = 44535
 
 url = f"http://localhost:{port}/"
 
