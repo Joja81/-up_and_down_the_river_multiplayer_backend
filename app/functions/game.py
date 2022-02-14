@@ -6,7 +6,7 @@ from app.models import Card, Game, Hand, Play, Round, Round_point, User, db
 suits = ['C', 'D', 'H', 'S']
 ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
-END_ROUND_WAIT_TIME = 2 #Time until next round starts
+END_ROUND_WAIT_TIME = 5 #Time until next round starts
 END_GAME_WAIT_TIME = 100 # Time until game is wiped from db
 
 def users_in_game(game):
@@ -90,13 +90,18 @@ def start_play(game, curr_round):
     new_play = Play(play_num = 1, current_user = curr_round.start_user, round = curr_round, game = game)
 
     db.session.add(new_play)
+    
+    print("creating new play for new round")
+    
     db.session.commit()
 
 def next_play(game_id, round_id):
-
+    
     game = Game.query.get(game_id)
 
     curr_round = Round.query.get(round_id)
+    
+    print("creating new play")
 
     play = Play.query.filter(Play.round == curr_round).order_by(Play.play_num.desc()).first()
 

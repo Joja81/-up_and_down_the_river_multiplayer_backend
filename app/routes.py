@@ -1,38 +1,23 @@
-
-from crypt import methods
-import imp
-from re import I
 import time
 from flask import current_app as app, request
 import json
+from app.functions.db_check import check_db
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from app.functions.game import get_curr_location, next_play, prepare_new_round
 from app.functions.guess import collect_cards, get_guesses, give_guess
 from app.functions.play import get_curr_cards, get_curr_wins, get_current_play, give_play
 from app.functions.result import get_curr_results
-
 from app.functions.start import change_num_cards, create_new_game, join_game, start_game, update_start_screen
 from app.functions.token import token_check
 from app.models import Game, Play, db
 
 
-#check for timed aspects
-@app.before_request
-def check_db():
-    # Checking for plays to start
-    plays = Play.query.filter(Play.round_status == "w", Play.wait_end <= time.time()).all()
-    
-    for play in plays:
-        play.round_status = "f"
-        next_play(play.game_id, play.round_id) 
-       
-    #check for new rounds
-    games = Game.query.filter(Game.game_stage == "R", Game.new_round_time <= time.time()).all()
-    
-    for game in games:
-        prepare_new_round(game.id)
+
         
-    
-    
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(check_db,'interval',seconds=1)
+sched.start()
 
 # Start routes
 @app.route("/start/create_game", methods = ["POST"])

@@ -26,3 +26,4 @@ toml==0.10.2
 urllib3==1.25.11
 Werkzeug==2.0.2
 yarg==0.1.9
+APScheduler==2.1.2

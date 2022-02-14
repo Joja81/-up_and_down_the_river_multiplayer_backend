@@ -2,7 +2,9 @@ from os import environ, getcwd, path
 
 port = 44535
 
-url = f"https://up-and-down-the-river.herokuapp.com/"
+url = f"http://localhost:{port}/"
+
+#backend server url "https://up-and-down-the-river.herokuapp.com/"
 
 class Config:
     """Set Flask configuration from .env file."""

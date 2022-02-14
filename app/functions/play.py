@@ -6,7 +6,7 @@ from app.functions.game import end_round, next_play, ranks
 
 from app.models import Card, Hand, Play, Round, User, db
 
-NEXT_PLAY_WAIT_TIME = 2
+NEXT_PLAY_WAIT_TIME = 5
 
 def get_curr_cards(auth_user_id):
     user = User.query.get(auth_user_id)
@@ -131,7 +131,6 @@ def give_play(auth_user_id, chosen_card):
         play.winner = winning_user
 
         if play.play_num < curr_round.card_num:
-            # next_play(game.id, curr_round.id) Move to check in server file
             
             play.round_status = "w"
             play.wait_end = time.time() + NEXT_PLAY_WAIT_TIME
