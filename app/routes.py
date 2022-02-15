@@ -1,8 +1,6 @@
 import time
 from flask import current_app as app, request
 import json
-from app.functions.db_check import check_db
-from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.functions.game import get_curr_location, next_play, prepare_new_round
 from app.functions.guess import collect_cards, get_guesses, give_guess
@@ -10,14 +8,34 @@ from app.functions.play import get_curr_cards, get_curr_wins, get_current_play, 
 from app.functions.result import get_curr_results
 from app.functions.start import change_num_cards, create_new_game, join_game, start_game, update_start_screen
 from app.functions.token import token_check
-from app.models import Game, Play, db
+from app.models import Game, Play, User, db
 
 
+@app.before_request
+def check_db():
+    # TODO Find a better solution to this. Current solution implemeneted to stop overlap where two requests attempt to do the same action
+    try:
+        token = request.args.get('token')
 
+        auth_user_id = token_check(token)
+        user = User.query.get(auth_user_id)
         
-sched = BackgroundScheduler(daemon=True)
-sched.add_job(check_db,'interval',seconds=1)
-sched.start()
+        # Checking for plays to start
+        plays = Play.query.filter(Play.round_status == "w", Play.wait_end <= time.time(), Play.current_user_id == auth_user_id).all()
+
+        for play in plays:
+            play.round_status = "f"
+            next_play(play.game_id, play.round_id) 
+
+        #check for new rounds
+        if user.is_owner:
+            games = Game.query.filter(Game.game_stage == "R", Game.new_round_time <= time.time(), Game.id == user.game_id).all()
+
+            for game in games:
+                prepare_new_round(game.id)
+    except Exception as e:
+        print(e)
+        
 
 # Start routes
 @app.route("/start/create_game", methods = ["POST"])
