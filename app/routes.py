@@ -10,6 +10,19 @@ from app.functions.start import change_num_cards, create_new_game, join_game, st
 from app.functions.token import token_check
 from app.models import Game, Play, User, db
 
+from app.functions.start import words_for_id
+
+@app.before_first_request
+def load_words():
+    
+    global words_for_id
+    
+    with open("nouns.txt") as f:
+        words = f.readlines()
+    
+    for word in words:
+        word = word.capitalize()
+        words_for_id.append(word[:-1])
 
 @app.before_request
 def check_db():
@@ -33,6 +46,8 @@ def check_db():
 
             for game in games:
                 prepare_new_round(game.id)
+                
+        db.session.commit()
     except Exception as e:
         print(e)
         

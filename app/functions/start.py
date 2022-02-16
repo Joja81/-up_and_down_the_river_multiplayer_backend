@@ -1,4 +1,7 @@
+import imp
+import random
 import time
+
 from app.functions.error import AccessError, InputError
 from app.functions.game import generate_round, users_in_game
 from app.functions.token import generate_token
@@ -6,7 +9,7 @@ from app.functions.token import generate_token
 from app.functions.user import create_user
 from app.models import Game, User, db
 
-
+words_for_id = []
 
 def create_new_game(name):
     '''Creates a new game with new user as owner'''
@@ -21,7 +24,9 @@ def create_new_game(name):
 
     # Create new game
 
-    new_game = Game(time_start = time.time(), max_cards = DEFAULT_CARD_NUMBER, game_stage = "S", card_num = 1, round_num = 1)
+    game_id = create_game_id()
+
+    new_game = Game(id = game_id, time_start = time.time(), max_cards = DEFAULT_CARD_NUMBER, game_stage = "S", card_num = 1, round_num = 1)
 
     user.game = new_game
 
@@ -37,6 +42,18 @@ def create_new_game(name):
         'game_id' : new_game.id,
         'user_names' : users_in_game(new_game)
     }
+
+def create_game_id():
+    
+    id = random.choice(words_for_id) + random.choice(words_for_id)
+    new_id = id
+    
+    count = 1
+    while (Game.query.get(new_id) != None):
+        new_id = f"{id}{count}"
+        
+    return new_id
+    
 
 def join_game(name, game_code):
 

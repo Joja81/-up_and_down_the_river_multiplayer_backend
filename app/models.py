@@ -156,7 +156,7 @@ class Game(db.Model):
         '''Store for game'''
         __tablename__ = 'games'
         # Make generation random
-        id = Column(Integer, primary_key=True)
+        id = Column(String, primary_key=True)
 
         time_start = Column(Integer)
 
