@@ -14,7 +14,7 @@ Setup API calls (all "start/")
 	- token
 	- num_cards (Integer)
 	- is_owner (Boolean)
-	- game_id (Integer)
+	- game_id (String)
 	- user_names[] (String)
 
 	Error
@@ -24,7 +24,7 @@ Setup API calls (all "start/")
 	Joins game with code
 	
 	Input
-	- game_id (Integer)
+	- game_id (String)
 	- name (String)	
 
 	Output
@@ -60,7 +60,7 @@ Setup API calls (all "start/")
 	Output
 	- num_cards (Integer)
 	- is_owner (Boolean)
-	- game_id(Integer)
+	- game_id(String)
 	- user_names[] (String)
 	- game_started (Boolean)
 
