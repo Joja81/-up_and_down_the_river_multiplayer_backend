@@ -2,6 +2,8 @@ import imp
 import random
 import time
 
+from sqlalchemy import func
+
 from app.functions.error import AccessError, InputError
 from app.functions.game import generate_round, users_in_game
 from app.functions.token import generate_token
@@ -57,7 +59,7 @@ def create_game_id():
 
 def join_game(name, game_code):
 
-    game = Game.query.get(game_code)
+    game = Game.query.filter(func.lower(Game.id) == func.lower(game_code)).first()
 
     if game is None:
         raise InputError(description = "Game code is invalid")
